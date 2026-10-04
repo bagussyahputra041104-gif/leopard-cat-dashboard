@@ -27,6 +27,9 @@ class _StatCardState extends State<StatCard> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final isMobile = width < 650;
+
     return MouseRegion(
       cursor: SystemMouseCursors.basic,
       onEnter: (_) => setState(() => _hovered = true),
@@ -38,12 +41,15 @@ class _StatCardState extends State<StatCard> {
         child: Card(
           elevation: _hovered ? 6 : 0,
           child: Padding(
-            padding: const EdgeInsets.all(18),
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 14 : 18,
+              vertical: isMobile ? 13 : 18,
+            ),
             child: Row(
               children: [
-                _buildIcon(),
-                const SizedBox(width: 14),
-                Expanded(child: _buildContent()),
+                _buildIcon(isMobile),
+                SizedBox(width: isMobile ? 11 : 14),
+                Expanded(child: _buildContent(isMobile)),
               ],
             ),
           ),
@@ -52,21 +58,24 @@ class _StatCardState extends State<StatCard> {
     );
   }
 
-  Widget _buildIcon() {
+  Widget _buildIcon(bool isMobile) {
+    final size = isMobile ? 40.0 : 44.0;
+    final iconSize = isMobile ? 18.0 : 20.0;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 180),
-      width: 44,
-      height: 44,
+      width: size,
+      height: size,
       decoration: BoxDecoration(
         color: widget.accentColor.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(13),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: widget.accentColor.withValues(alpha: 0.25)),
       ),
-      child: Icon(widget.icon, color: widget.accentColor, size: 20),
+      child: Icon(widget.icon, color: widget.accentColor, size: iconSize),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(bool isMobile) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -75,32 +84,32 @@ class _StatCardState extends State<StatCard> {
           widget.title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textSecondary,
-            fontSize: 11,
+            fontSize: isMobile ? 10.5 : 11,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         Text(
           widget.value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
-            fontSize: 24,
+            fontSize: isMobile ? 22 : 24,
             fontWeight: FontWeight.w700,
             height: 1.05,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         Text(
           widget.description,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textMuted,
-            fontSize: 9.5,
+            fontSize: isMobile ? 9 : 9.5,
             height: 1.1,
           ),
         ),

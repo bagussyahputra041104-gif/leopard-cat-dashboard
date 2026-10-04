@@ -4,6 +4,7 @@ import 'pages/dashboard_page.dart';
 import 'pages/events_page.dart';
 import 'pages/individuals_page.dart';
 import 'pages/occurrence_page.dart';
+import 'pages/splash_page.dart';
 import 'theme/app_colors.dart';
 
 class LeopardCatApp extends StatelessWidget {
@@ -14,14 +15,17 @@ class LeopardCatApp extends StatelessWidget {
     return MaterialApp(
       title: 'Wildlife Intelligence',
       debugShowCheckedModeBanner: false,
+
       theme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: AppColors.background,
         fontFamily: 'Arial',
+
         colorScheme: ColorScheme.dark(
           primary: AppColors.primary,
           surface: AppColors.surface,
         ),
+
         cardTheme: CardThemeData(
           color: AppColors.surface,
           elevation: 0,
@@ -32,10 +36,16 @@ class LeopardCatApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const AppShell(),
+
+      // Splash menjadi halaman pertama.
+      home: const SplashPage(),
     );
   }
 }
+
+// ============================================================
+// APP SHELL
+// ============================================================
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -85,6 +95,7 @@ class _AppShellState extends State<AppShell> {
       body: Row(
         children: [
           _buildSidebar(),
+
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 220),
@@ -114,13 +125,21 @@ class _AppShellState extends State<AppShell> {
           child: Column(
             children: [
               _buildSidebarBrand(),
+
               const SizedBox(height: 30),
+
               _buildResearchLabel(),
+
               const SizedBox(height: 9),
+
               _buildDesktopNavigation(),
+
               const Spacer(),
+
               _buildDatasetCard(),
+
               const SizedBox(height: 12),
+
               _buildSidebarFooter(),
             ],
           ),
@@ -148,7 +167,9 @@ class _AppShellState extends State<AppShell> {
             size: 22,
           ),
         ),
+
         const SizedBox(width: 11),
+
         const Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,7 +182,9 @@ class _AppShellState extends State<AppShell> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
+
               SizedBox(height: 1),
+
               Text(
                 'INTELLIGENCE',
                 style: TextStyle(
@@ -244,7 +267,9 @@ class _AppShellState extends State<AppShell> {
                   size: 18,
                   color: selected ? AppColors.primary : AppColors.textSecondary,
                 ),
+
                 const SizedBox(width: 12),
+
                 Expanded(
                   child: Text(
                     item.label,
@@ -257,6 +282,7 @@ class _AppShellState extends State<AppShell> {
                     ),
                   ),
                 ),
+
                 if (selected)
                   Container(
                     width: 5,
@@ -298,7 +324,9 @@ class _AppShellState extends State<AppShell> {
               size: 15,
             ),
           ),
+
           const SizedBox(width: 9),
+
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,12 +339,16 @@ class _AppShellState extends State<AppShell> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+
                 SizedBox(height: 5),
+
                 Text(
                   '135 research events',
                   style: TextStyle(color: AppColors.textSecondary, fontSize: 8),
                 ),
+
                 SizedBox(height: 3),
+
                 Text(
                   '2017 – 2018',
                   style: TextStyle(color: AppColors.textMuted, fontSize: 8),
@@ -324,6 +356,7 @@ class _AppShellState extends State<AppShell> {
               ],
             ),
           ),
+
           Container(
             width: 6,
             height: 6,
@@ -364,7 +397,9 @@ class _AppShellState extends State<AppShell> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
+
       appBar: _buildMobileAppBar(currentItem),
+
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 220),
         switchInCurve: Curves.easeOut,
@@ -374,6 +409,7 @@ class _AppShellState extends State<AppShell> {
           child: _pages[_selectedIndex],
         ),
       ),
+
       bottomNavigationBar: _buildMobileNavigation(),
     );
   }
@@ -385,6 +421,7 @@ class _AppShellState extends State<AppShell> {
       automaticallyImplyLeading: false,
       toolbarHeight: 62,
       titleSpacing: 16,
+
       title: Row(
         children: [
           Container(
@@ -403,7 +440,9 @@ class _AppShellState extends State<AppShell> {
               size: 19,
             ),
           ),
+
           const SizedBox(width: 10),
+
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -418,7 +457,9 @@ class _AppShellState extends State<AppShell> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+
                 const SizedBox(height: 2),
+
                 Text(
                   currentItem.label,
                   style: const TextStyle(
@@ -429,6 +470,7 @@ class _AppShellState extends State<AppShell> {
               ],
             ),
           ),
+
           Container(
             width: 8,
             height: 8,
@@ -439,6 +481,7 @@ class _AppShellState extends State<AppShell> {
           ),
         ],
       ),
+
       bottom: PreferredSize(
         preferredSize: const Size.fromHeight(1),
         child: Container(height: 1, color: AppColors.border),
@@ -484,6 +527,7 @@ class _AppShellState extends State<AppShell> {
           _selectedIndex = index;
         });
       },
+
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOut,
@@ -492,6 +536,7 @@ class _AppShellState extends State<AppShell> {
           color: selected ? AppColors.primaryDark : Colors.transparent,
           borderRadius: BorderRadius.circular(11),
         ),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -500,7 +545,9 @@ class _AppShellState extends State<AppShell> {
               size: 18,
               color: selected ? AppColors.primary : AppColors.textMuted,
             ),
+
             const SizedBox(height: 4),
+
             Text(
               item.label,
               maxLines: 1,
@@ -517,6 +564,10 @@ class _AppShellState extends State<AppShell> {
     );
   }
 }
+
+// ============================================================
+// NAVIGATION ITEM
+// ============================================================
 
 class _NavigationItem {
   final String label;
