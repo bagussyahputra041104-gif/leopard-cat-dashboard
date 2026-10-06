@@ -1,26 +1,29 @@
 name: leopard_cat_dashboard
-description: "Leopard Cat Camera Trap Research Dashboard."
+description: Leopard Cat Camera Trap Research Dashboard
 publish_to: 'none'
 
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.13.5
+  sdk: '>=3.8.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
   cupertino_icons: ^1.0.8
+  csv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^6.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
   uses-material-design: true
 
   assets:
     - assets/events/
+    - assets/data/dashboard_events.csv
+    - assets/splash_camera_trap.png

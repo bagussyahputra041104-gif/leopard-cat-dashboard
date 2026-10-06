@@ -18,6 +18,13 @@ class IndividualsPage extends StatelessWidget {
       (total, candidate) => total + candidate.eventCount,
     );
 
+    final int leopardCatEvents =
+        eventData.where((event) => event.isLeopardCat).length;
+
+    final int unassignedEvents = leopardCatEvents - assignedEvents > 0
+        ? leopardCatEvents - assignedEvents
+        : 0;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(28, 26, 28, 32),
       child: Column(
@@ -28,7 +35,10 @@ class IndividualsPage extends StatelessWidget {
           _buildOverview(
             candidateCount: candidateCount,
             assignedEvents: assignedEvents,
+            unassignedEvents: unassignedEvents,
           ),
+          const SizedBox(height: 20),
+          _buildMethodNote(),
           const SizedBox(height: 20),
           ...individualCandidates.map(_buildCandidateCard),
         ],
@@ -41,7 +51,7 @@ class IndividualsPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Leopard Cat Individuals',
+          'Leopard Cat Individual Candidates',
           style: TextStyle(
             color: AppColors.textPrimary,
             fontSize: 25,
@@ -51,8 +61,11 @@ class IndividualsPage extends StatelessWidget {
         ),
         SizedBox(height: 5),
         Text(
-          'Candidate individuals identified from leopard cat events.',
-          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+          'Candidate individual groups derived from leopard cat event re-identification.',
+          style: TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 11,
+          ),
         ),
       ],
     );
@@ -61,10 +74,11 @@ class IndividualsPage extends StatelessWidget {
   Widget _buildOverview({
     required int candidateCount,
     required int assignedEvents,
+    required int unassignedEvents,
   }) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final bool compact = constraints.maxWidth < 700;
+        final bool compact = constraints.maxWidth < 900;
 
         final cards = [
           _buildOverviewCard(
@@ -75,15 +89,27 @@ class IndividualsPage extends StatelessWidget {
           ),
           _buildOverviewCard(
             icon: Icons.link_rounded,
-            title: 'Assigned Events',
+            title: 'Assigned Leopard Cat Events',
             value: '$assignedEvents',
             color: AppColors.reid,
+          ),
+          _buildOverviewCard(
+            icon: Icons.help_outline_rounded,
+            title: 'Unassigned Leopard Cat Events',
+            value: '$unassignedEvents',
+            color: AppColors.textMuted,
           ),
         ];
 
         if (compact) {
           return Column(
-            children: [cards[0], const SizedBox(height: 12), cards[1]],
+            children: [
+              cards[0],
+              const SizedBox(height: 12),
+              cards[1],
+              const SizedBox(height: 12),
+              cards[2],
+            ],
           );
         }
 
@@ -92,6 +118,8 @@ class IndividualsPage extends StatelessWidget {
             Expanded(child: cards[0]),
             const SizedBox(width: 14),
             Expanded(child: cards[1]),
+            const SizedBox(width: 14),
+            Expanded(child: cards[2]),
           ],
         );
       },
@@ -115,34 +143,77 @@ class IndividualsPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.13),
                 borderRadius: BorderRadius.circular(11),
-                border: Border.all(color: color.withValues(alpha: 0.25)),
+                border: Border.all(
+                  color: color.withValues(alpha: 0.25),
+                ),
               ),
-              child: Icon(icon, color: color, size: 19),
+              child: Icon(
+                icon,
+                color: color,
+                size: 19,
+              ),
             ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 10,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 10,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 21,
-                    fontWeight: FontWeight.w700,
+                  const SizedBox(height: 3),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 21,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMethodNote() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: const Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.info_outline_rounded,
+            color: AppColors.reid,
+            size: 18,
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              'Re-identification results are presented as candidate individual '
+              'groups based on visual similarity and manual review. '
+              'They should not be interpreted as confirmed individual identities.',
+              style: TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 10.5,
+                height: 1.45,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -171,7 +242,10 @@ class IndividualsPage extends StatelessWidget {
                   runSpacing: 12,
                   children: [
                     for (final event in events)
-                      _buildEventPreview(event, width: cardWidth),
+                      _buildEventPreview(
+                        event,
+                        width: cardWidth,
+                      ),
                   ],
                 );
               },
@@ -186,11 +260,16 @@ class IndividualsPage extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 9,
+            vertical: 5,
+          ),
           decoration: BoxDecoration(
             color: AppColors.reid.withValues(alpha: 0.13),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.reid.withValues(alpha: 0.28)),
+            border: Border.all(
+              color: AppColors.reid.withValues(alpha: 0.28),
+            ),
           ),
           child: Text(
             candidate.candidateId,
@@ -214,13 +293,19 @@ class IndividualsPage extends StatelessWidget {
         ),
         Text(
           '${candidate.eventCount} events',
-          style: const TextStyle(color: AppColors.textMuted, fontSize: 9.5),
+          style: const TextStyle(
+            color: AppColors.textMuted,
+            fontSize: 9.5,
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildEventPreview(CameraTrapEvent event, {required double width}) {
+  Widget _buildEventPreview(
+    CameraTrapEvent event, {
+    required double width,
+  }) {
     return Container(
       width: width,
       padding: const EdgeInsets.all(7),
@@ -245,7 +330,10 @@ class IndividualsPage extends StatelessWidget {
             event.timestamp,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: AppColors.textMuted, fontSize: 7.5),
+            style: const TextStyle(
+              color: AppColors.textMuted,
+              fontSize: 7.5,
+            ),
           ),
           const SizedBox(height: 7),
           SizedBox(
@@ -264,21 +352,20 @@ class IndividualsPage extends StatelessWidget {
                           event.photoPaths[index],
                           height: 54,
                           fit: BoxFit.cover,
-                          errorBuilder:
-                              (
-                                BuildContext context,
-                                Object error,
-                                StackTrace? stackTrace,
-                              ) {
-                                return Container(
-                                  color: AppColors.surfaceLight,
-                                  child: const Icon(
-                                    Icons.image_not_supported_outlined,
-                                    color: AppColors.textMuted,
-                                    size: 13,
-                                  ),
-                                );
-                              },
+                          errorBuilder: (
+                            BuildContext context,
+                            Object error,
+                            StackTrace? stackTrace,
+                          ) {
+                            return Container(
+                              color: AppColors.surfaceLight,
+                              child: const Icon(
+                                Icons.image_not_supported_outlined,
+                                color: AppColors.textMuted,
+                                size: 13,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
