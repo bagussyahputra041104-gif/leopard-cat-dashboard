@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'pages/ai_test_page.dart';
+import 'pages/ai_history_page.dart';
+
 import 'pages/dashboard_page.dart';
 import 'pages/events_page.dart';
 import 'pages/individuals_page.dart';
@@ -62,6 +65,8 @@ class _AppShellState extends State<AppShell> {
     EventsPage(),
     IndividualsPage(),
     OccurrencePage(),
+    AiTestPage(),
+    AiHistoryPage(),
   ];
 
   final List<_NavigationItem> _navigationItems = const [
@@ -69,6 +74,8 @@ class _AppShellState extends State<AppShell> {
     _NavigationItem(label: 'Events', icon: Icons.photo_library_rounded),
     _NavigationItem(label: 'Individuals', icon: Icons.pets_rounded),
     _NavigationItem(label: 'Occurrence', icon: Icons.bar_chart_rounded),
+    _NavigationItem(label: 'AI Test', icon: Icons.auto_awesome_rounded),
+    _NavigationItem(label: 'AI History', icon: Icons.history_rounded),
   ];
 
   @override
@@ -575,3 +582,7 @@ class _NavigationItem {
 
   const _NavigationItem({required this.label, required this.icon});
 }
+
+
+
+

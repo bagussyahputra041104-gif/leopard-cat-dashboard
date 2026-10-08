@@ -6,6 +6,11 @@ import '../theme/app_colors.dart';
 class OccurrencePage extends StatelessWidget {
   const OccurrencePage({super.key});
 
+  // Final Re-ID summary
+  static const int candidateIndividuals = 2;
+  static const int strongMatches = 19;
+  static const int possibleMatches = 3;
+
   @override
   Widget build(BuildContext context) {
     final int totalEvents = eventData.length;
@@ -32,25 +37,39 @@ class OccurrencePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildHeader(),
+
           const SizedBox(height: 22),
+
           _buildStats(
             totalEvents: totalEvents,
             leopardCatEvents: leopardCatEvents,
             nullEvents: nullEvents,
           ),
+
+          const SizedBox(height: 18),
+
+          _buildReidSummary(),
+
           const SizedBox(height: 20),
+
           _buildDistribution(
             leopardCatEvents: leopardCatEvents,
             nullEvents: nullEvents,
             leopardPercentage: leopardPercentage,
             nullPercentage: nullPercentage,
           ),
+
           const SizedBox(height: 18),
+
           _buildTimeline(monthlyData),
         ],
       ),
     );
   }
+
+  // ============================================================
+  // HEADER
+  // ============================================================
 
   Widget _buildHeader() {
     return const Column(
@@ -74,6 +93,10 @@ class OccurrencePage extends StatelessWidget {
     );
   }
 
+  // ============================================================
+  // MAIN EVENT STATISTICS
+  // ============================================================
+
   Widget _buildStats({
     required int totalEvents,
     required int leopardCatEvents,
@@ -85,13 +108,13 @@ class OccurrencePage extends StatelessWidget {
 
         final cards = [
           _buildStat(
-            title: 'Total Events',
+            title: 'Total Research Events',
             value: '$totalEvents',
             icon: Icons.camera_alt_rounded,
             color: AppColors.event,
           ),
           _buildStat(
-            title: 'Leopard Cat',
+            title: 'Leopard Cat Events',
             value: '$leopardCatEvents',
             icon: Icons.pets_rounded,
             color: AppColors.leopard,
@@ -151,32 +174,192 @@ class OccurrencePage extends StatelessWidget {
               child: Icon(icon, color: color, size: 19),
             ),
             const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 10,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 10,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 21,
-                    fontWeight: FontWeight.w700,
+                  const SizedBox(height: 3),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
+                      fontSize: 21,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
   }
+
+  // ============================================================
+  // RE-ID SUMMARY
+  // ============================================================
+
+  Widget _buildReidSummary() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.pets_rounded, color: AppColors.reid, size: 18),
+              const SizedBox(width: 9),
+              const Expanded(
+                child: Text(
+                  'Re-ID Summary',
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const Text(
+                'Candidate-based',
+                style: TextStyle(color: AppColors.textMuted, fontSize: 8.5),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final bool compact = constraints.maxWidth < 650;
+
+              final items = [
+                _buildReidMetric(
+                  title: 'Candidate Individuals',
+                  value: '$candidateIndividuals',
+                  icon: Icons.groups_rounded,
+                  color: AppColors.reid,
+                ),
+                _buildReidMetric(
+                  title: 'Strong Matches',
+                  value: '$strongMatches',
+                  icon: Icons.verified_rounded,
+                  color: Colors.green,
+                ),
+                _buildReidMetric(
+                  title: 'Possible Matches',
+                  value: '$possibleMatches',
+                  icon: Icons.help_outline_rounded,
+                  color: Colors.orange,
+                ),
+              ];
+
+              if (compact) {
+                return Column(
+                  children: [
+                    items[0],
+                    const SizedBox(height: 8),
+                    items[1],
+                    const SizedBox(height: 8),
+                    items[2],
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  Expanded(child: items[0]),
+                  const SizedBox(width: 10),
+                  Expanded(child: items[1]),
+                  const SizedBox(width: 10),
+                  Expanded(child: items[2]),
+                ],
+              );
+            },
+          ),
+
+          const SizedBox(height: 10),
+
+          const Text(
+            'Re-identification results represent candidate individuals '
+            'derived from visual similarity and manual review. '
+            'They should not be interpreted as absolute population size.',
+            style: TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 9,
+              height: 1.4,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReidMetric({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: AppColors.background,
+        borderRadius: BorderRadius.circular(9),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 16),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: AppColors.textMuted,
+                    fontSize: 8,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // EVENT DISTRIBUTION
+  // ============================================================
 
   Widget _buildDistribution({
     required int leopardCatEvents,
@@ -200,19 +383,19 @@ class OccurrencePage extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             const Text(
-              'Distribution of research events by classification.',
+              'Distribution of recorded research events by classification.',
               style: TextStyle(color: AppColors.textMuted, fontSize: 10),
             ),
             const SizedBox(height: 18),
             _buildDistributionRow(
-              label: 'Leopard Cat',
+              label: 'Leopard Cat Events',
               count: leopardCatEvents,
               percentage: leopardPercentage,
               color: AppColors.leopard,
             ),
             const SizedBox(height: 14),
             _buildDistributionRow(
-              label: 'Null',
+              label: 'Null Events',
               count: nullEvents,
               percentage: nullPercentage,
               color: AppColors.nullEvent,
@@ -273,6 +456,10 @@ class OccurrencePage extends StatelessWidget {
     );
   }
 
+  // ============================================================
+  // TIMELINE
+  // ============================================================
+
   Widget _buildTimeline(List<_MonthlyOccurrence> monthlyData) {
     return Card(
       child: Padding(
@@ -290,7 +477,8 @@ class OccurrencePage extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             const Text(
-              'Monthly distribution of camera trap events based on event timestamps.',
+              'Monthly distribution of recorded camera trap events '
+              'based on event timestamps.',
               style: TextStyle(color: AppColors.textMuted, fontSize: 10),
             ),
             const SizedBox(height: 14),
@@ -306,9 +494,9 @@ class OccurrencePage extends StatelessWidget {
   Widget _buildLegend() {
     return Row(
       children: [
-        _legendItem(color: AppColors.leopard, label: 'Leopard Cat'),
+        _legendItem(color: AppColors.leopard, label: 'Leopard Cat Events'),
         const SizedBox(width: 18),
-        _legendItem(color: AppColors.nullEvent, label: 'Null'),
+        _legendItem(color: AppColors.nullEvent, label: 'Null Events'),
       ],
     );
   }
@@ -329,6 +517,10 @@ class OccurrencePage extends StatelessWidget {
       ],
     );
   }
+
+  // ============================================================
+  // MONTHLY DATA
+  // ============================================================
 
   List<_MonthlyOccurrence> _buildMonthlyData() {
     final Map<String, _MonthlyOccurrence> grouped = {};
@@ -369,9 +561,14 @@ class OccurrencePage extends StatelessWidget {
   }
 }
 
+// ============================================================
+// MONTHLY MODEL
+// ============================================================
+
 class _MonthlyOccurrence {
   final int year;
   final int month;
+
   int leopardCat = 0;
   int nullEvents = 0;
 
@@ -400,6 +597,10 @@ class _MonthlyOccurrence {
     return leopardCat > nullEvents ? leopardCat : nullEvents;
   }
 }
+
+// ============================================================
+// MONTHLY BAR CHART
+// ============================================================
 
 class _MonthlyBarChart extends StatelessWidget {
   final List<_MonthlyOccurrence> data;
